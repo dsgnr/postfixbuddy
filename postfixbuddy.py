@@ -6,6 +6,7 @@
 import os
 import os.path
 import argparse
+from subprocess import call
 
 __version__ = '0.1.0'
 
@@ -22,20 +23,8 @@ def get_options():
     parser = argparse.ArgumentParser()
     parser.add_argument("-l", "--list", dest="list_queues", action="store_true",
                         help="List all the current mail queues")
-    parser.add_argument("-D", "--delete", dest="delete_message", action="store_true",
-                        help="Delete the email message. Options: # or \"from:\"")
-    parser.add_argument("-r", "--reprocess", dest="process_queue",
-                        action="store_true", help="Try to reprocess queued messages now")
-    parser.add_argument("-m", "--message", dest="display_message",
-                        action="store_true", help="Displays the message")
-    parser.add_argument("-N", dest="display_message_ID",
-                        action="store_true", help="Displays only the message IDs")
-    parser.add_argument("-P", dest="purge_messages", action="store_true",
-                        help="Purge all messages from the mail queue. Options: hold|incoming|active|deferred")
-    parser.add_argument("-s", "--stats", dest="display_stats",
-                        action="store_true", help="Display the mail queue statistics")
-    parser.add_argument("-S", "--subject", dest="select_subject", action="store_true",
-                        help="Delete mail with this subject. Options: \"$subjectname\"")
+    parser.add_argument("-p", "--purge", dest="purge_messages", action="store_true",
+                        help="Purge all messages from the mail queue.")
     version = '%(prog)s ' + __version__
     parser.add_argument('-v', '--version', action='version', version=version)
     return parser
@@ -52,13 +41,29 @@ def list_queues():
             queue_types[index]) if os.path.isfile(os.path.join(queue_types[index], name))])
     print
 
+def purge_messages():
+    check = str(raw_input("Question ? (Y/N): ")).lower().strip()
+    try:
+        if check[0] == 'y':
+            call(["postsuper", "-d", "ALL"])
+        elif check[0] == 'n':
+            return False
+        else:
+            print('Invalid Input')
+            return purge_messages()
+    except Exception as error:
+        print("Please enter valid inputs")
+        print(error)
+        return purge_messages()        
+
 
 def main():
     parser = get_options()
     args = parser.parse_args()
     if args.list_queues:
         list_queues()
-
+    if args.purge_messages:
+        purge_messages()
 
 if __name__ == '__main__':
     main()

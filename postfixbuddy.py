@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #!python
 # postfixbuddy.py created by Daniel Hand (daniel.hand@rackspace.co.uk)
-# This is s a recreation of pfHandle.perl but in Python.
+# This is a recreation of pfHandle.perl but in Python.
 
 import os
 import os.path
@@ -28,6 +28,7 @@ def get_options():
                         help="Purge all messages from the mail queue.")
     parser.add_argument("-f", "--flush", dest="process_queues", action="store_true",
                         help="Flush mail queues")                        
+    parser.add_argument("-s", "--show", dest="show_message", type=str, help="Show message from queue ID")  
     version = '%(prog)s ' + __version__
     parser.add_argument('-v', '--version', action='version', version=version)
     return parser
@@ -64,15 +65,22 @@ def process_queues():
     call(["postqueue", "-f"])
     print 'Flushed all queues'
 
+def show_message():
+    parser = get_options()
+    args = parser.parse_args()    
+    call(["postcat", "-q", args.show_message])
+
 def main():
     parser = get_options()
     args = parser.parse_args()
     if args.list_queues:
         list_queues()
     if args.process_queues:
-        process_queues()        
+        process_queues()
     if args.purge_messages:
         purge_messages()
+    if args.show_message:
+        show_message()  
 
 if __name__ == '__main__':
     main()

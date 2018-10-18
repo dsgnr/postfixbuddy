@@ -13,9 +13,10 @@ __version__ = '0.1.0'
 # Variables
 pf_dir = '/var/spool/postfix/'
 active_queue = pf_dir + 'active'
-deferred_queue = pf_dir + 'deferred'
 bounce_queue = pf_dir + 'bounce'
 corrupt_queue = pf_dir + 'corrupt'
+deferred_queue = pf_dir + 'deferred'
+hold_queue = pf_dir + 'hold'
 incoming_queue = pf_dir + 'incoming'
 
 
@@ -23,7 +24,7 @@ def get_options():
     parser = argparse.ArgumentParser()
     parser.add_argument("-l", "--list", dest="list_queues", action="store_true",
                         help="List all the current mail queues")
-    parser.add_argument("-p", "--purge", dest="purge_messages", action="store_true",
+    parser.add_argument('-p', '--purge', dest='purge_messages', type=str, choices=['active', 'bounce', 'corrupt', 'deferred', 'hold', 'incoming'],
                         help="Purge all messages from the mail queue.")
     version = '%(prog)s ' + __version__
     parser.add_argument('-v', '--version', action='version', version=version)
@@ -31,9 +32,9 @@ def get_options():
 
 
 def list_queues():
-    queue_list = ['Active', 'Deferred', 'Bounce', 'Corrupt', 'Incoming']
-    queue_types = [active_queue, deferred_queue,
-                   bounce_queue, corrupt_queue, incoming_queue]
+    queue_list = ['Active', 'Bounce', 'Corrupt', 'Deferred', 'Hold', 'Incoming']
+    queue_types = [active_queue, bounce_queue, corrupt_queue,
+                   deferred_queue, hold_queue, incoming_queue]
     print
     print '============== Mail Queue Summary =============='
     for index in range(len(queue_list)):
@@ -42,10 +43,12 @@ def list_queues():
     print
 
 def purge_messages():
-    check = str(raw_input("Question ? (Y/N): ")).lower().strip()
+    parser = get_options()
+    args = parser.parse_args()
+    check = str(raw_input("Do you really want to purge the " + args.purge_messages + " queue? (Y/N): ")).lower().strip()
     try:
         if check[0] == 'y':
-            call(["postsuper", "-d", "ALL"])
+            call(["postsuper", "-d", "ALL", args.purge_messages])
         elif check[0] == 'n':
             return False
         else:

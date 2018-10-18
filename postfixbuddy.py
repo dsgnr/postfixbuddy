@@ -26,10 +26,11 @@ def get_options():
                         help="List all the current mail queues")
     parser.add_argument('-p', '--purge', dest='purge_messages', type=str, choices=['active', 'bounce', 'corrupt', 'deferred', 'hold', 'incoming'],
                         help="Purge all messages from the mail queue.")
+    parser.add_argument("-f", "--flush", dest="process_queues", action="store_true",
+                        help="Flush mail queues")                        
     version = '%(prog)s ' + __version__
     parser.add_argument('-v', '--version', action='version', version=version)
     return parser
-
 
 def list_queues():
     queue_list = ['Active', 'Bounce', 'Corrupt', 'Deferred', 'Hold', 'Incoming']
@@ -59,12 +60,17 @@ def purge_messages():
         print(error)
         return purge_messages()        
 
+def process_queues():
+    call(["postqueue", "-f"])
+    print 'Flushed all queues'
 
 def main():
     parser = get_options()
     args = parser.parse_args()
     if args.list_queues:
         list_queues()
+    if args.process_queues:
+        process_queues()        
     if args.purge_messages:
         purge_messages()
 

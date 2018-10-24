@@ -127,12 +127,12 @@ def delete_mail():
 
 
 def hold_queues():
-    call(["postuser", "-h", "ALL"])
+    call(["postsuper", "-h", "ALL"])
     print('All mail queues no on hold!')
 
 
 def release_queues():
-    call(["postuser", "-H", "ALL"])
+    call(["postsuper", "-H", "ALL"])
     print('Queues no longer in a held state!')
 
 

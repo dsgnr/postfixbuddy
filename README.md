@@ -8,7 +8,11 @@ PostfixBuddy is a recreation of pfHandle.perl but written in Python.
     -l, --list            List all the current mail queues
     -p {active,bounce,corrupt,deferred,hold,incoming}, --purge {active,bounce,corrupt,deferred,hold,incoming}
                             Purge messages from specific queues.
+    -d DELETE_MAIL, --delete DELETE_MAIL
+                            Delete specific email based on mailq ID.
     -c, --clean           Purge messages from all queues.
+    -H, --hold            Hold all mail queues.
+    -r, --release         Release all mail queues from held state.
     -f, --flush           Flush mail queues
     -s SHOW_MESSAGE, --show SHOW_MESSAGE
                             Show message from queue ID
@@ -107,4 +111,23 @@ This option allows you to delete a specific email in the queue if you know the m
 Do you really want to delete mail 77A4D1203C2? (Y/N): Y
 postsuper: 77A4D1203C2: removed
 postsuper: Deleted: 1 message
-Deleted mail 77A4D1203C2!```
+Deleted mail 77A4D1203C2!
+```
+
+#### Putting mail queues on hold
+
+It is possible to put mail queues on hold. Whilst queues are in a held state, no attempt will be made to deliver it.
+
+Note:  while  mail is "on hold" it will not expire when its time in the queue exceeds the **maximal_queue_lifetime** or **bounce_queue_lifetime** setting. It becomes subject to expiration after it is released from "hold".
+
+```
+➜  ./postfixbuddy.py -H
+All mail queues no on hold!
+```
+
+To release the queues from their held state, simply use the `-r` flag.
+
+```
+➜  ./postfixbuddy.py -r
+Queues no longer in a held state!
+```

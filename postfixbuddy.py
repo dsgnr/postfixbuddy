@@ -163,7 +163,7 @@ def delete_by_subject():
                    deferred_queue, hold_queue, incoming_queue]
     for index in range(len(queue_list)):
         print('Searching for mail with this subject in: ' + queue_types[index] + '...')
-        os.popen('grep -ri \'Subject: ' + args.delete_by_subject + '\' ' + queue_types[index] + ' | awk \'{print $3}\' | cut -d/ -f7 | postsuper -d -').read()
+        os.popen('grep -ri ' + args.delete_by_subject + ' ' + queue_types[index] + ' | awk \'{print $3}\' | cut -d/ -f7 | postsuper -d -').read()
 
 
 def main():

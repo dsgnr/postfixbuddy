@@ -25,8 +25,10 @@ def get_options():
     parser = argparse.ArgumentParser()
     parser.add_argument("-l", "--list", dest="list_queues", action="store_true",
                         help="List all the current mail queues")
-    parser.add_argument('-p', '--purge', dest='purge_messages', type=str, choices=['active', 'bounce', 'corrupt', 'deferred', 'hold', 'incoming'],
+    parser.add_argument('-p', '--purge', dest='purge_queues', type=str, choices=['active', 'bounce', 'corrupt', 'deferred', 'hold', 'incoming'],
                         help="Purge messages from specific queues.")
+    parser.add_argument('-c', '--clean', dest='clean_queues', action="store_true",
+                        help="Purge messages from all queues.")
     parser.add_argument("-f", "--flush", dest="process_queues", action="store_true",
                         help="Flush mail queues")
     parser.add_argument("-s", "--show", dest="show_message", type=str, help="Show message from queue ID")
@@ -45,23 +47,41 @@ def list_queues():
         print (queue_list[index], 'Queue Count:', file_count)
     print
 
-def purge_messages():
+def purge_queues():
     parser = get_options()
     args = parser.parse_args()
-    check = str(raw_input("Do you really want to purge the " + args.purge_messages + " queue? (Y/N): ")).lower().strip()
+    check = str(raw_input("Do you really want to purge the " + args.purge_queues + " queue? (Y/N): ")).lower().strip()
     try:
         if check[0] == 'y':
-            call(["postsuper", "-d", "ALL", args.purge_messages])
-            print("Purged all mail from the " + args.purge_messages + " queue!")
+            call(["postsuper", "-d", "ALL", args.purge_queues])
+            print("Purged all mail from the " + args.purge_queues + " queue!")
         elif check[0] == 'n':
             return False
         else:
             print('Invalid Input')
-            return purge_messages()
+            return purge_queues()
     except Exception as error:
         print("Please enter valid inputs")
         print(error)
-        return purge_messages()
+        return purge_queues()
+
+def clean_queues():
+    parser = get_options()
+    args = parser.parse_args()
+    check = str(raw_input("Do you really want to purge ALL mail queues? (Y/N): ")).lower().strip()
+    try:
+        if check[0] == 'y':
+            call(["postsuper", "-d", "ALL"])
+            print("Purged all mail queues!")
+        elif check[0] == 'n':
+            return False
+        else:
+            print('Invalid Input')
+            return clean_queues()
+    except Exception as error:
+        print("Please enter valid inputs")
+        print(error)
+        return clean_queues()
 
 def process_queues():
     call(["postqueue", "-f"])
@@ -79,8 +99,10 @@ def main():
         list_queues()
     if args.process_queues:
         process_queues()
-    if args.purge_messages:
-        purge_messages()
+    if args.purge_queues:
+        purge_queues()
+    if args.clean_queues:
+        clean_queues()
     if args.show_message:
         show_message()
 

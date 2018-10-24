@@ -122,7 +122,7 @@ Note:  while  mail is "on hold" it will not expire when its time in the queue ex
 
 ```
 ➜  ./postfixbuddy.py -H
-All mail queues no on hold!
+All mail queues now on hold!
 ```
 
 To release the queues from their held state, simply use the `-r` flag.

@@ -11,7 +11,7 @@ from subprocess import call
 __version__ = '0.1.0'
 
 # Variables
-pf_dir = os.popen('postconf -d | grep queue_directory | awk \'{print $3}\'').read()
+pf_dir = os.popen('postconf -d | grep queue_directory | awk \'{print $3}\' | sed \'s/$/\//\' | head -c -1').read()
 active_queue = pf_dir + 'active'
 bounce_queue = pf_dir + 'bounce'
 corrupt_queue = pf_dir + 'corrupt'
@@ -29,7 +29,7 @@ def get_options():
                         choices=['active', 'bounce', 'corrupt',
                                  'deferred', 'hold', 'incoming'],
                         help="Purge messages from specific queues.")
-    parser.add_argument('-d', '--delete', dest='delete_mail', type=str,
+    parser.add_argument('-m', '--message', dest='delete_mail', type=str,
                         help="Delete specific email based on mailq ID.")
     parser.add_argument('-c', '--clean', dest='clean_queues',
                         action="store_true",
@@ -42,6 +42,10 @@ def get_options():
                         help="Release all mail queues from held state.")
     parser.add_argument("-f", "--flush", dest="process_queues",
                         action="store_true", help="Flush mail queues")
+    parser.add_argument("-D", "--delete", dest="delete_by_address", type=str,
+                        help="Delete based on email address")
+    parser.add_argument("-S", "--subject", dest="delete_by_subject", type=str,
+                        help="Delete based on mail subject")
     parser.add_argument("-s", "--show", dest="show_message", type=str,
                         help="Show message from queue ID")
     version = '%(prog)s ' + __version__
@@ -54,11 +58,8 @@ def list_queues():
                   'Deferred', 'Hold', 'Incoming']
     queue_types = [active_queue, bounce_queue, corrupt_queue,
                    deferred_queue, hold_queue, incoming_queue]
-    print
-    print('============== Mail Queue Summary ==============')
     for index in range(len(queue_list)):
-        file_count = sum(len(files) for _, _, files in os.walk(
-            queue_types[index]))
+        file_count = sum(len(files) for _, _, files in os.walk(queue_types[index]))
         print(queue_list[index], 'Queue Count:', file_count)
     print
 
@@ -147,6 +148,23 @@ def show_message():
     call(["postcat", "-q", args.show_message])
 
 
+def delete_by_address():
+    parser = get_options()
+    args = parser.parse_args()
+    os.popen('postqueue -p | tail -n +2 | awk \'BEGIN { RS = "" } /' + args.delete_by_address + '/ { print $1 }\' | tr -d \'*!\' | postsuper -d -').read()
+
+
+def delete_by_subject():
+    parser = get_options()
+    args = parser.parse_args()
+    queue_list = ['Active', 'Bounce', 'Corrupt',
+                  'Deferred', 'Hold', 'Incoming']
+    queue_types = [active_queue, bounce_queue, corrupt_queue,
+                   deferred_queue, hold_queue, incoming_queue]
+    for index in range(len(queue_list)):
+        print('Searching for mail in: ' + queue_types[index] +'...')
+        os.popen('grep -ri \'Subject: ' + args.delete_by_subject '\' ' + queue_types[index] + ' | awk \'{print $3}\' | cut -d/ -f7 | postsuper -d -').read()
+
 def main():
     parser = get_options()
     args = parser.parse_args()
@@ -166,6 +184,10 @@ def main():
         process_queues()
     if args.show_message:
         show_message()
+    if args.delete_by_address:
+        delete_by_address()
+    if args.delete_by_subject:
+        delete_by_subject()
 
 if __name__ == '__main__':
     main()

@@ -11,7 +11,7 @@ from subprocess import call
 __version__ = '0.1.0'
 
 # Variables
-pf_dir = '/var/spool/postfix/'
+pf_dir = os.popen('postconf -d | grep queue_directory | awk \'{print $3}\'').read()
 active_queue = pf_dir + 'active'
 bounce_queue = pf_dir + 'bounce'
 corrupt_queue = pf_dir + 'corrupt'
@@ -113,7 +113,7 @@ def delete_mail():
     )).lower().strip()
     try:
         if check[0] == 'y':
-            call(["postsuper", "-d", args.delete_mail ])
+            call(["postsuper", "-d", args.delete_mail])
             print("Deleted mail ID " + args.delete_mail + "!")
         elif check[0] == 'n':
             return False

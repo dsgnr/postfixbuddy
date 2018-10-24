@@ -37,6 +37,9 @@ def get_options():
     parser.add_argument("-H", "--hold", dest="hold_queues",
                         action="store_true",
                         help="Hold all mail queues.")
+    parser.add_argument("-r", "--release", dest="release_queues",
+                        action="store_true",
+                        help="Release all mail queues from held state.")
     parser.add_argument("-f", "--flush", dest="process_queues",
                         action="store_true", help="Flush mail queues")
     parser.add_argument("-s", "--show", dest="show_message", type=str,
@@ -128,6 +131,11 @@ def hold_queues():
     print('Put all mail queues on hold!')
 
 
+def release_queues():
+    call(["postuser", "-H", "ALL"])
+    print('Queues no longer in a held state!')
+
+
 def process_queues():
     call(["postqueue", "-f"])
     print('Flushed all queues!')
@@ -152,6 +160,8 @@ def main():
         delete_mail()
     if args.hold_queues:
         hold_queues()
+    if args.release_queues:
+        release_queues()
     if args.process_queues:
         process_queues()
     if args.show_message:

@@ -4,7 +4,6 @@
 
 from __future__ import absolute_import, division, print_function
 import os
-import os.path
 import argparse
 from subprocess import call
 
@@ -58,6 +57,7 @@ def list_queues():
                   'Deferred', 'Hold', 'Incoming']
     queue_types = [active_queue, bounce_queue, corrupt_queue,
                    deferred_queue, hold_queue, incoming_queue]
+    print('============== Mail Queue Summary ==============')
     for index in range(len(queue_list)):
         file_count = sum(len(files) for _, _, files in os.walk(queue_types[index]))
         print(queue_list[index], 'Queue Count:', file_count)
@@ -162,8 +162,9 @@ def delete_by_subject():
     queue_types = [active_queue, bounce_queue, corrupt_queue,
                    deferred_queue, hold_queue, incoming_queue]
     for index in range(len(queue_list)):
-        print('Searching for mail in: ' + queue_types[index] +'...')
-        os.popen('grep -ri \'Subject: ' + args.delete_by_subject '\' ' + queue_types[index] + ' | awk \'{print $3}\' | cut -d/ -f7 | postsuper -d -').read()
+        print('Searching for mail with this subject in: ' + queue_types[index] + '...')
+        os.popen('grep -ri \'Subject: ' + args.delete_by_subject + '\' ' + queue_types[index] + ' | awk \'{print $3}\' | cut -d/ -f7 | postsuper -d -').read()
+
 
 def main():
     parser = get_options()

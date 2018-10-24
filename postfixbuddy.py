@@ -41,8 +41,8 @@ def list_queues():
     print
     print ('============== Mail Queue Summary ==============')
     for index in range(len(queue_list)):
-        print (queue_list[index], 'Queue Count:', len([name for name in os.listdir(
-            queue_types[index]) if os.path.isfile(os.path.join(queue_types[index], name))]))
+        file_count = sum(len(files) for _, _, files in os.walk(queue_types[index]))
+        print (queue_list[index], 'Queue Count:', file_count)
     print
 
 def purge_messages():

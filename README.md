@@ -16,7 +16,7 @@ PostfixBuddy is a recreation of pfHandle.perl but written in Python.
 
 #### Listing statistics of queues
 
-```python 
+``` 
 ➜ ./postfixbuddy.py  -l
 ============== Mail Queue Summary ==============
 Active Queue Count: 12
@@ -29,7 +29,7 @@ Incoming Queue Count: 198
 #### Flushing mail queues
 This forces Postfix to reprocess the mail queue.
 
-```python
+```
 ➜ ./postfixbuddy.py -f
 Flushed all queues!
 ```
@@ -37,7 +37,7 @@ Flushed all queues!
 #### Purging queues
 It is possible to purge specific queues. To purge a single queue, specify the queue name after `-p`.
 
-```python
+```
 ➜ ./postfixbuddy.py -p active
 Do you really want to purge the active queue? (Y/N): Y
 Purged all mail from the active queue!
@@ -54,7 +54,7 @@ Incoming Queue Count: 198
 #### Clean queues
 This option allows you to purge all mail queues. This has been separated from the purge option to avoid accidental purging of all queues.
 
-```python
+```
 ➜ ./postfixbuddy.py -c
 Do you really want to purge ALL mail queues? (Y/N): Y
 Purged all mail queues!
@@ -72,7 +72,7 @@ Incoming Queue Count: 0
 #### Viewing messages
 It is possible to view specific mail based on their mailq IDs. 
 
-```python
+```
 ➜  ./postfixbuddy.py -s 6CB161202AB
 *** ENVELOPE RECORDS active/6CB161202AB ***
 message_size:             398             206               1               0             398

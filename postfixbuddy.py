@@ -29,6 +29,8 @@ def get_options():
                         choices=['active', 'bounce', 'corrupt',
                                  'deferred', 'hold', 'incoming'],
                         help="Purge messages from specific queues.")
+    parser.add_argument('-d', '--delete', dest='delete_mail', type=str,
+                        help="Delete specific email based on mailq ID.")
     parser.add_argument('-c', '--clean', dest='clean_queues',
                         action="store_true",
                         help="Purge messages from all queues.")
@@ -97,6 +99,27 @@ def clean_queues():
         return clean_queues()
 
 
+def delete_mail():
+    parser = get_options()
+    args = parser.parse_args()
+    check = str(raw_input(
+        "Do you really want to delete mail " + args.delete_mail + "? (Y/N): "
+    )).lower().strip()
+    try:
+        if check[0] == 'y':
+            call(["postsuper", "-d", args.delete_mail ])
+            print("Deleted mail ID " + args.delete_mail + "!")
+        elif check[0] == 'n':
+            return False
+        else:
+            print('Invalid Input')
+            return delete_mail()
+    except Exception as error:
+        print("Please enter valid inputs")
+        print(error)
+        return delete_mail()
+
+
 def process_queues():
     call(["postqueue", "-f"])
     print('Flushed all queues!')
@@ -117,6 +140,8 @@ def main():
         process_queues()
     if args.purge_queues:
         purge_queues()
+    if args.delete_mail:
+        delete_mail()
     if args.clean_queues:
         clean_queues()
     if args.show_message:

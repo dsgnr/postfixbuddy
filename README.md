@@ -98,4 +98,13 @@ recipient: username@example.com
 *** MESSAGE FILE END active/6CB161202AB ***
 ```
 
+#### Deleting mail based on mailq ID
 
+This option allows you to delete a specific email in the queue if you know the mailq ID.
+
+```
+➜  ./postfixbuddy.py -d 77A4D1203C2
+Do you really want to delete mail77A4D1203C2? (Y/N): Y
+postsuper: 77A4D1203C2: removed
+postsuper: Deleted: 1 message
+Deleted mail 77A4D1203C2!```

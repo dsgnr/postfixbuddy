@@ -3,6 +3,7 @@
 # postfixbuddy.py created by Daniel Hand (daniel.hand@rackspace.co.uk)
 # This is a recreation of pfHandle.perl but in Python.
 
+from __future__ import absolute_import, division, print_function
 import os
 import os.path
 import argparse
@@ -27,8 +28,8 @@ def get_options():
     parser.add_argument('-p', '--purge', dest='purge_messages', type=str, choices=['active', 'bounce', 'corrupt', 'deferred', 'hold', 'incoming'],
                         help="Purge all messages from the mail queue.")
     parser.add_argument("-f", "--flush", dest="process_queues", action="store_true",
-                        help="Flush mail queues")                        
-    parser.add_argument("-s", "--show", dest="show_message", type=str, help="Show message from queue ID")  
+                        help="Flush mail queues")
+    parser.add_argument("-s", "--show", dest="show_message", type=str, help="Show message from queue ID")
     version = '%(prog)s ' + __version__
     parser.add_argument('-v', '--version', action='version', version=version)
     return parser
@@ -38,10 +39,10 @@ def list_queues():
     queue_types = [active_queue, bounce_queue, corrupt_queue,
                    deferred_queue, hold_queue, incoming_queue]
     print
-    print '============== Mail Queue Summary =============='
+    print ('============== Mail Queue Summary ==============')
     for index in range(len(queue_list)):
-        print queue_list[index], 'Queue Count:', len([name for name in os.listdir(
-            queue_types[index]) if os.path.isfile(os.path.join(queue_types[index], name))])
+        print (queue_list[index], 'Queue Count:', len([name for name in os.listdir(
+            queue_types[index]) if os.path.isfile(os.path.join(queue_types[index], name))]))
     print
 
 def purge_messages():
@@ -59,15 +60,15 @@ def purge_messages():
     except Exception as error:
         print("Please enter valid inputs")
         print(error)
-        return purge_messages()        
+        return purge_messages()
 
 def process_queues():
     call(["postqueue", "-f"])
-    print 'Flushed all queues'
+    print ('Flushed all queues')
 
 def show_message():
     parser = get_options()
-    args = parser.parse_args()    
+    args = parser.parse_args()
     call(["postcat", "-q", args.show_message])
 
 def main():
@@ -80,7 +81,7 @@ def main():
     if args.purge_messages:
         purge_messages()
     if args.show_message:
-        show_message()  
+        show_message()
 
 if __name__ == '__main__':
     main()

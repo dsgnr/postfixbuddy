@@ -131,3 +131,34 @@ To release the queues from their held state, simply use the `-r` flag.
 ➜  ./postfixbuddy.py -r
 Queues no longer in a held state!
 ```
+
+#### Deleting mail by subject
+
+It is possible to specify the subject name can be searched for and removed within all mailqueues. This is particularly good if a spam outbreak has occured and you know of some specific keywords that are found in all mail. If subjects contain multiple words, please wrap them in inverted commas.
+
+```
+➜  ./postfixbuddy.py -S "This is my subject"
+Searching for mail with this subject in: /var/spool/postfix/active...
+grep: mail: No such file or directory
+Searching for mail with this subject in: /var/spool/postfix/bounce...
+grep: mail: No such file or directory
+Searching for mail with this subject in: /var/spool/postfix/corrupt...
+grep: mail: No such file or directory
+Searching for mail with this subject in: /var/spool/postfix/deferred...
+grep: mail: No such file or directory
+postsuper: 931A4120226: removed
+postsuper: Deleted: 1 message
+Searching for mail with this subject in: /var/spool/postfix/hold...
+grep: mail: No such file or directory
+Searching for mail with this subject in: /var/spool/postfix/incoming...
+```
+
+#### Deleting mail by address
+
+It is possible to delete mail by entering the hostname, or full email address. There is no need to wrap the address. **All** mail queues will be searched.
+
+```
+➜  ./postfixbuddy.py -D example.com
+postsuper: 8669112052B: removed
+postsuper: Deleted: 1 message
+```

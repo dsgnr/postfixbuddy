@@ -34,6 +34,9 @@ def get_options():
     parser.add_argument('-c', '--clean', dest='clean_queues',
                         action="store_true",
                         help="Purge messages from all queues.")
+    parser.add_argument("-H", "--hold", dest="hold_queues",
+                        action="store_true",
+                        help="Hold all mail queues.")
     parser.add_argument("-f", "--flush", dest="process_queues",
                         action="store_true", help="Flush mail queues")
     parser.add_argument("-s", "--show", dest="show_message", type=str,
@@ -120,6 +123,11 @@ def delete_mail():
         return delete_mail()
 
 
+def hold_queues():
+    call(["postuser", "-h", "ALL"])
+    print('Put all mail queues on hold!')
+
+
 def process_queues():
     call(["postqueue", "-f"])
     print('Flushed all queues!')
@@ -136,14 +144,16 @@ def main():
     args = parser.parse_args()
     if args.list_queues:
         list_queues()
-    if args.process_queues:
-        process_queues()
     if args.purge_queues:
         purge_queues()
-    if args.delete_mail:
-        delete_mail()
     if args.clean_queues:
         clean_queues()
+    if args.delete_mail:
+        delete_mail()
+    if args.hold_queues:
+        hold_queues()
+    if args.process_queues:
+        process_queues()
     if args.show_message:
         show_message()
 

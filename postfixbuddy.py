@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-#!python
 # postfixbuddy.py created by Daniel Hand (daniel.hand@rackspace.co.uk)
 # This is a recreation of pfHandle.perl but in Python.
 
@@ -23,34 +22,45 @@ incoming_queue = pf_dir + 'incoming'
 
 def get_options():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-l", "--list", dest="list_queues", action="store_true",
+    parser.add_argument("-l", "--list", dest="list_queues",
+                        action="store_true",
                         help="List all the current mail queues")
-    parser.add_argument('-p', '--purge', dest='purge_queues', type=str, choices=['active', 'bounce', 'corrupt', 'deferred', 'hold', 'incoming'],
+    parser.add_argument('-p', '--purge', dest='purge_queues', type=str,
+                        choices=['active', 'bounce', 'corrupt',
+                                 'deferred', 'hold', 'incoming'],
                         help="Purge messages from specific queues.")
-    parser.add_argument('-c', '--clean', dest='clean_queues', action="store_true",
+    parser.add_argument('-c', '--clean', dest='clean_queues',
+                        action="store_true",
                         help="Purge messages from all queues.")
-    parser.add_argument("-f", "--flush", dest="process_queues", action="store_true",
-                        help="Flush mail queues")
-    parser.add_argument("-s", "--show", dest="show_message", type=str, help="Show message from queue ID")
+    parser.add_argument("-f", "--flush", dest="process_queues",
+                        action="store_true", help="Flush mail queues")
+    parser.add_argument("-s", "--show", dest="show_message", type=str,
+                        help="Show message from queue ID")
     version = '%(prog)s ' + __version__
     parser.add_argument('-v', '--version', action='version', version=version)
     return parser
 
+
 def list_queues():
-    queue_list = ['Active', 'Bounce', 'Corrupt', 'Deferred', 'Hold', 'Incoming']
+    queue_list = ['Active', 'Bounce', 'Corrupt',
+                  'Deferred', 'Hold', 'Incoming']
     queue_types = [active_queue, bounce_queue, corrupt_queue,
                    deferred_queue, hold_queue, incoming_queue]
     print
-    print ('============== Mail Queue Summary ==============')
+    print('============== Mail Queue Summary ==============')
     for index in range(len(queue_list)):
-        file_count = sum(len(files) for _, _, files in os.walk(queue_types[index]))
-        print (queue_list[index], 'Queue Count:', file_count)
+        file_count = sum(len(files) for _, _, files in os.walk(
+            queue_types[index]))
+        print(queue_list[index], 'Queue Count:', file_count)
     print
+
 
 def purge_queues():
     parser = get_options()
     args = parser.parse_args()
-    check = str(raw_input("Do you really want to purge the " + args.purge_queues + " queue? (Y/N): ")).lower().strip()
+    check = str(raw_input(
+        "Do you really want to purge the " + args.purge_queues +
+        " queue? (Y/N): ")).lower().strip()
     try:
         if check[0] == 'y':
             call(["postsuper", "-d", "ALL", args.purge_queues])
@@ -65,10 +75,13 @@ def purge_queues():
         print(error)
         return purge_queues()
 
+
 def clean_queues():
     parser = get_options()
     args = parser.parse_args()
-    check = str(raw_input("Do you really want to purge ALL mail queues? (Y/N): ")).lower().strip()
+    check = str(raw_input(
+        "Do you really want to purge ALL mail queues? (Y/N): "
+    )).lower().strip()
     try:
         if check[0] == 'y':
             call(["postsuper", "-d", "ALL"])
@@ -83,14 +96,17 @@ def clean_queues():
         print(error)
         return clean_queues()
 
+
 def process_queues():
     call(["postqueue", "-f"])
-    print ('Flushed all queues!')
+    print('Flushed all queues!')
+
 
 def show_message():
     parser = get_options()
     args = parser.parse_args()
     call(["postcat", "-q", args.show_message])
+
 
 def main():
     parser = get_options()

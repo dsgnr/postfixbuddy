@@ -8,12 +8,16 @@ PostfixBuddy is a recreation of pfHandle.perl but written in Python.
     -l, --list            List all the current mail queues
     -p {active,bounce,corrupt,deferred,hold,incoming}, --purge {active,bounce,corrupt,deferred,hold,incoming}
                             Purge messages from specific queues.
-    -d DELETE_MAIL, --delete DELETE_MAIL
+    -m DELETE_MAIL, --message DELETE_MAIL
                             Delete specific email based on mailq ID.
     -c, --clean           Purge messages from all queues.
     -H, --hold            Hold all mail queues.
     -r, --release         Release all mail queues from held state.
     -f, --flush           Flush mail queues
+    -D DELETE_BY_ADDRESS, --delete DELETE_BY_ADDRESS
+                            Delete based on email address
+    -S DELETE_BY_SUBJECT, --subject DELETE_BY_SUBJECT
+                            Delete based on mail subject
     -s SHOW_MESSAGE, --show SHOW_MESSAGE
                             Show message from queue ID
     -v, --version         show program's version number and exit

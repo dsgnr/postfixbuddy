@@ -6,17 +6,20 @@ from __future__ import absolute_import, division, print_function
 import os
 import argparse
 from subprocess import call
+import subprocess
 
 __version__ = '0.1.0'
 
 # Variables
-pf_dir = os.popen('postconf -d | grep queue_directory | awk \'{print $3}\' | sed \'s/$/\//\' | head -c -1').read()
-active_queue = pf_dir + 'active'
-bounce_queue = pf_dir + 'bounce'
-corrupt_queue = pf_dir + 'corrupt'
-deferred_queue = pf_dir + 'deferred'
-hold_queue = pf_dir + 'hold'
-incoming_queue = pf_dir + 'incoming'
+get_queue_dir = subprocess.Popen(["/usr/sbin/postconf", "-h", "queue_directory"],
+                                 stdout=subprocess.PIPE, shell=False)
+pf_dir = get_queue_dir.communicate()[0].strip()
+active_queue = pf_dir + '/active'
+bounce_queue = pf_dir + '/bounce'
+corrupt_queue = pf_dir + '/corrupt'
+deferred_queue = pf_dir + '/deferred'
+hold_queue = pf_dir + '/hold'
+incoming_queue = pf_dir + '/incoming'
 
 
 def get_options():

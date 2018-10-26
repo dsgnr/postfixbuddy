@@ -7,22 +7,21 @@ PostfixBuddy is a recreation of pfHandle.perl but written in Python.
     -h, --help            show this help message and exit
     -l, --list            List all the current mail queues
     -p {active,bounce,corrupt,deferred,hold,incoming}, --purge {active,bounce,corrupt,deferred,hold,incoming}
-                            Purge messages from specific queues.
+                          Purge messages from specific queues.
     -m DELETE_MAIL, --message DELETE_MAIL
-                            Delete specific email based on mailq ID.
+                          Delete specific email based on mailq ID.
     -c, --clean           Purge messages from all queues.
     -H, --hold            Hold all mail queues.
     -r, --release         Release all mail queues from held state.
     -f, --flush           Flush mail queues
-    -D DELETE_BY_ADDRESS, --delete DELETE_BY_ADDRESS
-                            Delete based on email address
-    -S DELETE_BY_SUBJECT, --subject DELETE_BY_SUBJECT
-                            Delete based on mail subject
+    -D DELETE_BY_SEARCH, --delete DELETE_BY_SEARCH
+                          Delete based on subject or email address
     -s SHOW_MESSAGE, --show SHOW_MESSAGE
-                            Show message from queue ID
+                          Show message from queue ID
     -v, --version         show program's version number and exit
 
 #### Listing statistics of queues
+Lists a counter for all mail queues. 
 
 ``` 
 ➜ ./postfixbuddy.py  -l
@@ -59,12 +58,15 @@ Deferred Queue Count: 23
 Hold Queue Count: 0
 Incoming Queue Count: 198
 ```
+
 #### Clean queues
 This option allows you to purge all mail queues. This has been separated from the purge option to avoid accidental purging of all queues.
 
 ```
 ➜ ./postfixbuddy.py -c
 Do you really want to purge ALL mail queues? (Y/N): Y
+Do you really want to purge ALL mail queues? (Y/N): y
+postsuper: Deleted: 36 messages
 Purged all mail queues!
 
 ➜ ./postfixbuddy.py -l
@@ -107,7 +109,6 @@ recipient: username@example.com
 ```
 
 #### Deleting mail based on mailq ID
-
 This option allows you to delete a specific email in the queue if you know the mailq ID.
 
 ```
@@ -119,7 +120,6 @@ Deleted mail 77A4D1203C2!
 ```
 
 #### Putting mail queues on hold
-
 It is possible to put mail queues on hold. Whilst queues are in a held state, no attempt will be made to deliver it.
 
 Note:  while  mail is "on hold" it will not expire when its time in the queue exceeds the **maximal_queue_lifetime** or **bounce_queue_lifetime** setting. It becomes subject to expiration after it is released from "hold".
@@ -136,33 +136,10 @@ To release the queues from their held state, simply use the `-r` flag.
 Queues no longer in a held state!
 ```
 
-#### Deleting mail by subject
-
-It is possible to specify the subject name can be searched for and removed within all mailqueues. This is particularly good if a spam outbreak has occured and you know of some specific keywords that are found in all mail. If subjects contain multiple words, please wrap them in inverted commas.
-
-```
-➜  ./postfixbuddy.py -S "This is my subject"
-Searching for mail with this subject in: /var/spool/postfix/active...
-grep: mail: No such file or directory
-Searching for mail with this subject in: /var/spool/postfix/bounce...
-grep: mail: No such file or directory
-Searching for mail with this subject in: /var/spool/postfix/corrupt...
-grep: mail: No such file or directory
-Searching for mail with this subject in: /var/spool/postfix/deferred...
-grep: mail: No such file or directory
-postsuper: 931A4120226: removed
-postsuper: Deleted: 1 message
-Searching for mail with this subject in: /var/spool/postfix/hold...
-grep: mail: No such file or directory
-Searching for mail with this subject in: /var/spool/postfix/incoming...
-```
-
-#### Deleting mail by address
-
-It is possible to delete mail by entering the hostname, or full email address. There is no need to wrap the address. **All** mail queues will be searched.
+#### Deleting mail by search
+It is possible to specify mail to delete using `-D`. Mail in all queues will be searched for and removed. This is particularly good if a spam outbreak has occured and you know of some specific keywords or an email address that are found in all mail. If subjects contain multiple words, please wrap them in inverted commas.
 
 ```
-➜  ./postfixbuddy.py -D example.com
-postsuper: 8669112052B: removed
-postsuper: Deleted: 1 message
+➜  ./postfixbuddy.py -D "Some subject to find"
+Total deleted: 2
 ```

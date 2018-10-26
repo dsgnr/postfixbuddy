@@ -3,28 +3,14 @@
 # This is a recreation of pfHandle.perl but in Python.
 
 from __future__ import absolute_import, division, print_function
-import os, argparse, sys, subprocess
+import os
+from os.path import join
+import argparse
+import sys
+import subprocess
 from subprocess import call
 
 __version__ = '0.1.0'
-
-# Variables
-try:
-    get_queue_dir = subprocess.Popen(['/usr/sbin/postconf', '-h', 'queue_directory'],
-                                     stdout=subprocess.PIPE,
-                                     stderr=subprocess.PIPE);
-    output,error = get_queue_dir.communicate()
-    if output:
-        pf_dir = output.split()[0]
-except OSError as ex:
-    sys.exit("Unable to find Postfix queue directory!")
-
-active_queue = pf_dir + '/active'
-bounce_queue = pf_dir + '/bounce'
-corrupt_queue = pf_dir + '/corrupt'
-deferred_queue = pf_dir + '/deferred'
-hold_queue = pf_dir + '/hold'
-incoming_queue = pf_dir + '/incoming'
 
 
 def get_options():
@@ -49,22 +35,43 @@ def get_options():
                         help="Release all mail queues from held state.")
     parser.add_argument("-f", "--flush", dest="process_queues",
                         action="store_true", help="Flush mail queues")
-    parser.add_argument("-D", "--delete", dest="delete_by_address", type=str,
-                        help="Delete based on email address")
-    parser.add_argument("-S", "--subject", dest="delete_by_subject", type=str,
-                        help="Delete based on mail subject")
+    parser.add_argument("-D", "--delete", dest="delete_by_search", type=str,
+                        help="Delete based on subject or email address")
     parser.add_argument("-s", "--show", dest="show_message", type=str,
                         help="Show message from queue ID")
     version = '%(prog)s ' + __version__
     parser.add_argument('-v', '--version', action='version', version=version)
     return parser
 
+# All variables defined in this script reply on finding the queue_directory.
+# This defines the pf_dir variable which is called later on.
+try:
+    get_queue_dir = subprocess.Popen(['/usr/sbin/postconf', '-h', 'queue_directory'],
+                                     stdout=subprocess.PIPE,
+                                     stderr=subprocess.PIPE)
+    output, error = get_queue_dir.communicate()
+    if output:
+        pf_dir = output.split()[0]
+except OSError as ex:
+    sys.exit("Unable to find Postfix queue directory!")
+
+
+# Variables
+active_queue = pf_dir + '/active'
+bounce_queue = pf_dir + '/bounce'
+corrupt_queue = pf_dir + '/corrupt'
+deferred_queue = pf_dir + '/deferred'
+hold_queue = pf_dir + '/hold'
+incoming_queue = pf_dir + '/incoming'
+queue_list = ['Active', 'Bounce', 'Corrupt',
+              'Deferred', 'Hold', 'Incoming']
+queue_types = [active_queue, bounce_queue, corrupt_queue,
+               deferred_queue, hold_queue, incoming_queue]
+parser = get_options()
+args = parser.parse_args()
+
 
 def list_queues():
-    queue_list = ['Active', 'Bounce', 'Corrupt',
-                  'Deferred', 'Hold', 'Incoming']
-    queue_types = [active_queue, bounce_queue, corrupt_queue,
-                   deferred_queue, hold_queue, incoming_queue]
     print('============== Mail Queue Summary ==============')
     for index in range(len(queue_list)):
         file_count = sum(len(files) for _, _, files in os.walk(queue_types[index]))
@@ -73,8 +80,7 @@ def list_queues():
 
 
 def purge_queues():
-    parser = get_options()
-    args = parser.parse_args()
+
     check = str(raw_input(
         "Do you really want to purge the " + args.purge_queues +
         " queue? (Y/N): ")).lower().strip()
@@ -94,8 +100,6 @@ def purge_queues():
 
 
 def clean_queues():
-    parser = get_options()
-    args = parser.parse_args()
     check = str(raw_input(
         "Do you really want to purge ALL mail queues? (Y/N): "
     )).lower().strip()
@@ -115,8 +119,6 @@ def clean_queues():
 
 
 def delete_mail():
-    parser = get_options()
-    args = parser.parse_args()
     check = str(raw_input(
         "Do you really want to delete mail " + args.delete_mail + "? (Y/N): "
     )).lower().strip()
@@ -151,32 +153,25 @@ def process_queues():
 
 
 def show_message():
-    parser = get_options()
-    args = parser.parse_args()
     call(["postcat", "-q", args.show_message])
 
 
-def delete_by_address():
-    parser = get_options()
-    args = parser.parse_args()
-    os.popen('postqueue -p | tail -n +2 | awk \'BEGIN { RS = "" } /' + args.delete_by_address + '/ { print $1 }\' | tr -d \'*!\' | postsuper -d -').read()
-
-
-def delete_by_subject():
-    parser = get_options()
-    args = parser.parse_args()
-    queue_list = ['Active', 'Bounce', 'Corrupt',
-                  'Deferred', 'Hold', 'Incoming']
-    queue_types = [active_queue, bounce_queue, corrupt_queue,
-                   deferred_queue, hold_queue, incoming_queue]
+def delete_by_search():
+    count = 0
     for index in range(len(queue_list)):
-        print('Searching for mail with this subject in: ' + queue_types[index] + '...')
-        os.popen('grep -ri ' + args.delete_by_subject + ' ' + queue_types[index] + ' | awk \'{print $3}\' | cut -d/ -f7 | postsuper -d -').read()
+        for (dirname, dirs, files) in os.walk(queue_types[index]):
+            for mail_id in files:
+                thefile = os.path.join(dirname, mail_id)
+                for line in open(thefile):
+                    if args.delete_by_search in line:
+                        subprocess.Popen(['/usr/sbin/postsuper', '-d', mail_id],
+                                         stdout=subprocess.PIPE,
+                                         stderr=subprocess.PIPE)
+                        count += 1
+    print("Total deleted: {0}".format(count))
 
 
 def main():
-    parser = get_options()
-    args = parser.parse_args()
     if args.list_queues:
         list_queues()
     if args.purge_queues:
@@ -193,10 +188,9 @@ def main():
         process_queues()
     if args.show_message:
         show_message()
-    if args.delete_by_address:
-        delete_by_address()
-    if args.delete_by_subject:
-        delete_by_subject()
+    if args.delete_by_search:
+        delete_by_search()
+
 
 if __name__ == '__main__':
     main()

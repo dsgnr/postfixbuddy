@@ -3,17 +3,22 @@
 # This is a recreation of pfHandle.perl but in Python.
 
 from __future__ import absolute_import, division, print_function
-import os
-import argparse
+import os, argparse, sys, subprocess
 from subprocess import call
-import subprocess
 
 __version__ = '0.1.0'
 
 # Variables
-get_queue_dir = subprocess.Popen(["/usr/sbin/postconf", "-h", "queue_directory"],
-                                 stdout=subprocess.PIPE, shell=False)
-pf_dir = get_queue_dir.communicate()[0].strip()
+try:
+    get_queue_dir = subprocess.Popen(['/usr/sbin/postconf', '-h', 'queue_directory'],
+                                     stdout=subprocess.PIPE,
+                                     stderr=subprocess.PIPE);
+    output,error = get_queue_dir.communicate()
+    if output:
+        pf_dir = output.split()[0]
+except OSError as ex:
+    sys.exit("Unable to find Postfix queue directory!")
+
 active_queue = pf_dir + '/active'
 bounce_queue = pf_dir + '/bounce'
 corrupt_queue = pf_dir + '/corrupt'

@@ -39,8 +39,9 @@ def get_options():
                         help='Delete based on subject or email address')
     parser.add_argument('-s', '--show', dest='show_message', type=str,
                         help='Show message from queue ID')
-    version = '%(prog)s ' + __version__
-    parser.add_argument('-v', '--version', action='version', version=version)
+    parser.add_argument('-v', '--version', dest='show_version',
+                        action='store_true',
+                        help='Shows version information')
     return parser
 
 # All variables defined in this script reply on finding the queue_directory.
@@ -80,6 +81,19 @@ queue_types = [active_queue, bounce_queue, corrupt_queue,
                deferred_queue, hold_queue, incoming_queue]
 parser = get_options()
 args = parser.parse_args()
+
+def show_version():
+    print('''
+                    _    __ _      _               _     _
+                    | |  / _(_)    | |             | |   | |
+    _ __   ___  ___| |_| |_ ___  _| |__  _   _  __| | __| |_   _
+    | '_ \ / _ \/ __| __|  _| \ \/ / '_ \| | | |/ _` |/ _` | | | |
+    | |_) | (_) \__ \ |_| | | |>  <| |_) | |_| | (_| | (_| | |_| |
+    | .__/ \___/|___/\__|_| |_/_/\_\_.__/ \__,_|\__,_|\__,_|\__, |
+    | |                                                      __/ |
+    |_|                                                     |___/
+    ''')
+    print(__version__)
 
 
 def list_queues():
@@ -184,6 +198,8 @@ def delete_by_search():
 
 
 def main():
+    if args.show_version:
+        return show_version()
     if args.list_queues:
         return list_queues()
     if args.purge_queues:

@@ -56,6 +56,17 @@ except OSError as ex:
     sys.exit('Unable to find Postfix queue directory!')
 
 
+class color:
+    RED     = '\033[31m\033[1m'
+    GREEN   = '\033[32m\033[1m'
+    YELLOW  = '\033[33m\033[1m'
+    BLUE    = '\033[34m\033[1m'
+    MAGENTA = '\033[35m\033[1m'
+    CYAN    = '\033[36m\033[1m'
+    WHITE   = '\033[37m\033[1m'
+    RESET   = '\033[0m'
+
+
 # Variables
 active_queue = pf_dir + '/active'
 bounce_queue = pf_dir + '/bounce'
@@ -72,7 +83,7 @@ args = parser.parse_args()
 
 
 def list_queues():
-    print('============== Mail Queue Summary ==============')
+    print(color.MAGENTA + '============== Mail Queue Summary ==============' + color.RESET)
     for index in range(len(queue_list)):
         file_count = sum(len(files) for _, _, files in os.walk(queue_types[index]))
         print(queue_list[index], 'Queue Count:', file_count)
@@ -81,75 +92,76 @@ def list_queues():
 
 def purge_queues():
 
-    check = str(raw_input(
+    check = str(raw_input(color.RED +
         'Do you really want to purge the ' + args.purge_queues +
-        ' queue? (Y/N): ')).lower().strip()
+        ' queue? (Y/N): ' + color.RESET)).lower().strip()
     try:
         if check[0] == 'y':
             call(['postsuper', '-d', 'ALL', args.purge_queues])
-            print('Purged all mail from the ' + args.purge_queues + ' queue!')
+            print(color.GREEN + 'Purged all mail from the ' + args.purge_queues + ' queue!' + color.RESET)
         elif check[0] == 'n':
             return False
         else:
-            print('Invalid Input')
+            print(color.RED + 'Invalid Input' + color.RESET)
             return purge_queues()
     except Exception as error:
-        print('Please enter valid inputs')
+        print(color.RED + 'Please enter valid inputs' + color.RESET)
         print(error)
         return purge_queues()
 
 
 def clean_queues():
-    check = str(raw_input(
-        'Do you really want to purge ALL mail queues? (Y/N): '
+    check = str(raw_input(color.RED +
+        'Do you really want to purge ALL mail queues? (Y/N): ' + color.RESET
     )).lower().strip()
     try:
         if check[0] == 'y':
             call(['postsuper', '-d', 'ALL'])
-            print('Purged all mail queues!')
+            print(color.GREEN + 'Purged all mail queues!' + color.RESET)
         elif check[0] == 'n':
             return False
         else:
-            print('Invalid Input')
+            print(color.RED + 'Invalid Input' + color.RESET)
             return clean_queues()
     except Exception as error:
-        print('Please enter valid inputs')
+        print(color.RED + 'Please enter valid inputs' + color.RESET)
         print(error)
         return clean_queues()
 
 
 def delete_mail():
-    check = str(raw_input(
+    check = str(raw_input(color.RED +
         'Do you really want to delete mail ' + args.delete_mail + '? (Y/N): '
-    )).lower().strip()
+    + color.RESET)).lower().strip()
     try:
         if check[0] == 'y':
             call(['postsuper', '-d', args.delete_mail])
-            print('Deleted mail ID ' + args.delete_mail + '!')
+            print(color.GREEN + 'Deleted mail ID ' + args.delete_mail + '!'
+                  + color.RESET)
         elif check[0] == 'n':
             return False
         else:
-            print('Invalid Input')
+            print(color.RED + 'Invalid Input' + color.RESET)
             return delete_mail()
     except Exception as error:
-        print('Please enter valid inputs')
-        print(error)
+        print(color.RED + 'Please enter valid inputs' + color.RESET)
+        print(color.RED + error + color.RESET)
         return delete_mail()
 
 
 def hold_queues():
     call(['postsuper', '-h', 'ALL'])
-    print('All mail queues now on hold!')
+    print(color.GREEN + 'All mail queues now on hold!' + color.RESET)
 
 
 def release_queues():
     call(['postsuper', '-H', 'ALL'])
-    print('Queues no longer in a held state!')
+    print(color.GREEN + 'Queues no longer in a held state!' + color.RESET)
 
 
 def process_queues():
     call(['postqueue', '-f'])
-    print('Flushed all queues!')
+    print(color.GREEN + 'Flushed all queues!' + color.RESET)
 
 
 def show_message():
@@ -168,7 +180,7 @@ def delete_by_search():
                                          stdout=subprocess.PIPE,
                                          stderr=subprocess.PIPE)
                         count += 1
-    print('Total deleted: {0}'.format(count))
+    print(color.GREEN + 'Total deleted: {0}'.format(count) + color.RESET)
 
 
 def main():

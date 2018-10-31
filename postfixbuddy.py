@@ -15,30 +15,30 @@ __version__ = '0.1.0'
 
 def get_options():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-l", "--list", dest="list_queues",
-                        action="store_true",
-                        help="List all the current mail queues")
+    parser.add_argument('-l', '--list', dest='list_queues',
+                        action='store_true',
+                        help='List all the current mail queues')
     parser.add_argument('-p', '--purge', dest='purge_queues', type=str,
                         choices=['active', 'bounce', 'corrupt',
                                  'deferred', 'hold', 'incoming'],
-                        help="Purge messages from specific queues.")
+                        help='Purge messages from specific queues.')
     parser.add_argument('-m', '--message', dest='delete_mail', type=str,
-                        help="Delete specific email based on mailq ID.")
+                        help='Delete specific email based on mailq ID.')
     parser.add_argument('-c', '--clean', dest='clean_queues',
-                        action="store_true",
-                        help="Purge messages from all queues.")
-    parser.add_argument("-H", "--hold", dest="hold_queues",
-                        action="store_true",
-                        help="Hold all mail queues.")
-    parser.add_argument("-r", "--release", dest="release_queues",
-                        action="store_true",
-                        help="Release all mail queues from held state.")
-    parser.add_argument("-f", "--flush", dest="process_queues",
-                        action="store_true", help="Flush mail queues")
-    parser.add_argument("-D", "--delete", dest="delete_by_search", type=str,
-                        help="Delete based on subject or email address")
-    parser.add_argument("-s", "--show", dest="show_message", type=str,
-                        help="Show message from queue ID")
+                        action='store_true',
+                        help='Purge messages from all queues.')
+    parser.add_argument('-H', '--hold', dest='hold_queues',
+                        action='store_true',
+                        help='Hold all mail queues.')
+    parser.add_argument('-r', '--release', dest='release_queues',
+                        action='store_true',
+                        help='Release all mail queues from held state.')
+    parser.add_argument('-f', '--flush', dest='process_queues',
+                        action='store_true', help='Flush mail queues')
+    parser.add_argument('-D', '--delete', dest='delete_by_search', type=str,
+                        help='Delete based on subject or email address')
+    parser.add_argument('-s', '--show', dest='show_message', type=str,
+                        help='Show message from queue ID')
     version = '%(prog)s ' + __version__
     parser.add_argument('-v', '--version', action='version', version=version)
     return parser
@@ -53,7 +53,7 @@ try:
     if output:
         pf_dir = output.split()[0]
 except OSError as ex:
-    sys.exit("Unable to find Postfix queue directory!")
+    sys.exit('Unable to find Postfix queue directory!')
 
 
 # Variables
@@ -82,78 +82,78 @@ def list_queues():
 def purge_queues():
 
     check = str(raw_input(
-        "Do you really want to purge the " + args.purge_queues +
-        " queue? (Y/N): ")).lower().strip()
+        'Do you really want to purge the ' + args.purge_queues +
+        ' queue? (Y/N): ')).lower().strip()
     try:
         if check[0] == 'y':
-            call(["postsuper", "-d", "ALL", args.purge_queues])
-            print("Purged all mail from the " + args.purge_queues + " queue!")
+            call(['postsuper', '-d', 'ALL', args.purge_queues])
+            print('Purged all mail from the ' + args.purge_queues + ' queue!')
         elif check[0] == 'n':
             return False
         else:
             print('Invalid Input')
             return purge_queues()
     except Exception as error:
-        print("Please enter valid inputs")
+        print('Please enter valid inputs')
         print(error)
         return purge_queues()
 
 
 def clean_queues():
     check = str(raw_input(
-        "Do you really want to purge ALL mail queues? (Y/N): "
+        'Do you really want to purge ALL mail queues? (Y/N): '
     )).lower().strip()
     try:
         if check[0] == 'y':
-            call(["postsuper", "-d", "ALL"])
-            print("Purged all mail queues!")
+            call(['postsuper', '-d', 'ALL'])
+            print('Purged all mail queues!')
         elif check[0] == 'n':
             return False
         else:
             print('Invalid Input')
             return clean_queues()
     except Exception as error:
-        print("Please enter valid inputs")
+        print('Please enter valid inputs')
         print(error)
         return clean_queues()
 
 
 def delete_mail():
     check = str(raw_input(
-        "Do you really want to delete mail " + args.delete_mail + "? (Y/N): "
+        'Do you really want to delete mail ' + args.delete_mail + '? (Y/N): '
     )).lower().strip()
     try:
         if check[0] == 'y':
-            call(["postsuper", "-d", args.delete_mail])
-            print("Deleted mail ID " + args.delete_mail + "!")
+            call(['postsuper', '-d', args.delete_mail])
+            print('Deleted mail ID ' + args.delete_mail + '!')
         elif check[0] == 'n':
             return False
         else:
             print('Invalid Input')
             return delete_mail()
     except Exception as error:
-        print("Please enter valid inputs")
+        print('Please enter valid inputs')
         print(error)
         return delete_mail()
 
 
 def hold_queues():
-    call(["postsuper", "-h", "ALL"])
+    call(['postsuper', '-h', 'ALL'])
     print('All mail queues now on hold!')
 
 
 def release_queues():
-    call(["postsuper", "-H", "ALL"])
+    call(['postsuper', '-H', 'ALL'])
     print('Queues no longer in a held state!')
 
 
 def process_queues():
-    call(["postqueue", "-f"])
+    call(['postqueue', '-f'])
     print('Flushed all queues!')
 
 
 def show_message():
-    call(["postcat", "-q", args.show_message])
+    call(['postcat', '-q', args.show_message])
 
 
 def delete_by_search():
@@ -168,7 +168,7 @@ def delete_by_search():
                                          stdout=subprocess.PIPE,
                                          stderr=subprocess.PIPE)
                         count += 1
-    print("Total deleted: {0}".format(count))
+    print('Total deleted: {0}'.format(count))
 
 
 def main():

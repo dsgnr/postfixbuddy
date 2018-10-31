@@ -47,7 +47,8 @@ def get_options():
 # All variables defined in this script reply on finding the queue_directory.
 # This defines the pf_dir variable which is called later on.
 try:
-    get_queue_dir = subprocess.Popen(['/usr/sbin/postconf', '-h', 'queue_directory'],
+    get_queue_dir = subprocess.Popen(['/usr/sbin/postconf',
+                                     '-h', 'queue_directory'],
                                      stdout=subprocess.PIPE,
                                      stderr=subprocess.PIPE)
     output, error = get_queue_dir.communicate()
@@ -58,14 +59,14 @@ except OSError as ex:
 
 
 class color:
-    RED     = '\033[31m\033[1m'
-    GREEN   = '\033[32m\033[1m'
-    YELLOW  = '\033[33m\033[1m'
-    BLUE    = '\033[34m\033[1m'
+    RED = '\033[31m\033[1m'
+    GREEN = '\033[32m\033[1m'
+    YELLOW = '\033[33m\033[1m'
+    BLUE = '\033[34m\033[1m'
     MAGENTA = '\033[35m\033[1m'
-    CYAN    = '\033[36m\033[1m'
-    WHITE   = '\033[37m\033[1m'
-    RESET   = '\033[0m'
+    CYAN = '\033[36m\033[1m'
+    WHITE = '\033[37m\033[1m'
+    RESET = '\033[0m'
 
 
 # Variables
@@ -82,6 +83,7 @@ queue_types = [active_queue, bounce_queue, corrupt_queue,
 parser = get_options()
 args = parser.parse_args()
 
+
 def show_version():
     print(color.GREEN + '''
                     _    __ _      _               _     _
@@ -95,22 +97,27 @@ def show_version():
 
 
 def list_queues():
-    print(color.MAGENTA + '============== Mail Queue Summary ==============' + color.RESET)
+    print(color.MAGENTA + '==== Mail Queue Summary ====' +
+          color.RESET)
     for index in range(len(queue_list)):
-        file_count = sum(len(files) for _, _, files in os.walk(queue_types[index]))
-        print(queue_list[index], 'Queue Count:', file_count)
+        file_count = sum(len(files) for _, _, files in
+                         os.walk(queue_types[index]))
+        print(color.YELLOW + queue_list[index], 'Queue Count:' +
+              color.BLUE, file_count, color.RESET)
     print
 
 
 def purge_queues():
 
     check = str(raw_input(color.RED +
-        'Do you really want to purge the ' + args.purge_queues +
-        ' queue? (Y/N): ' + color.RESET)).lower().strip()
+                          'Do you really want to purge the ' +
+                          args.purge_queues +
+                          ' queue? (Y/N): ' + color.RESET)).lower().strip()
     try:
         if check[0] == 'y':
             call(['postsuper', '-d', 'ALL', args.purge_queues])
-            print(color.GREEN + 'Purged all mail from the ' + args.purge_queues + ' queue!' + color.RESET)
+            print(color.GREEN + 'Purged all mail from the ' +
+                  args.purge_queues + ' queue!' + color.RESET)
         elif check[0] == 'n':
             return False
         else:
@@ -124,8 +131,10 @@ def purge_queues():
 
 def clean_queues():
     check = str(raw_input(color.RED +
-        'Do you really want to purge ALL mail queues? (Y/N): ' + color.RESET
-    )).lower().strip()
+                          'Do you really want to purge'
+                          'ALL mail queues? (Y/N): ' +
+                          color.RESET
+                          )).lower().strip()
     try:
         if check[0] == 'y':
             call(['postsuper', '-d', 'ALL'])
@@ -143,13 +152,14 @@ def clean_queues():
 
 def delete_mail():
     check = str(raw_input(color.RED +
-        'Do you really want to delete mail ' + args.delete_mail + '? (Y/N): '
-    + color.RESET)).lower().strip()
+                          'Do you really want to delete mail ' +
+                          args.delete_mail + '? (Y/N): ' +
+                          color.RESET)).lower().strip()
     try:
         if check[0] == 'y':
             call(['postsuper', '-d', args.delete_mail])
-            print(color.GREEN + 'Deleted mail ID ' + args.delete_mail + '!'
-                  + color.RESET)
+            print(color.GREEN + 'Deleted mail ID: ' + color.YELLOW +
+                  args.delete_mail + color.GREEN + '!' + color.RESET)
         elif check[0] == 'n':
             return False
         else:
@@ -188,13 +198,16 @@ def delete_by_search():
                 thefile = os.path.join(dirname, mail_id)
                 for line in open(thefile):
                     if args.delete_by_search in line:
-                        subprocess.Popen(['/usr/sbin/postsuper', '-d', mail_id],
+                        subprocess.Popen(['/usr/sbin/postsuper',
+                                         '-d', mail_id],
                                          stdout=subprocess.PIPE,
                                          stderr=subprocess.PIPE)
                         count += 1
-    print(color.BLUE + 'Looking for mail containing: \"' + args.delete_by_search + '\"...' + color.RESET)
+    print(color.BLUE + 'Looking for mail containing: \"' +
+          args.delete_by_search + '\"...' + color.RESET)
     if count == 0:
-        print (color.RED + '\"' + args.delete_by_search + '\" not found in search.' + color.RESET)
+        print(color.RED + '\"' + args.delete_by_search +
+              '\" not found in search.' + color.RESET)
     if count != 0:
         print(color.GREEN + 'Total deleted: {0}'.format(count) + color.RESET)
 

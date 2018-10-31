@@ -83,17 +83,15 @@ parser = get_options()
 args = parser.parse_args()
 
 def show_version():
-    print('''
+    print(color.GREEN + '''
                     _    __ _      _               _     _
-                    | |  / _(_)    | |             | |   | |
-    _ __   ___  ___| |_| |_ ___  _| |__  _   _  __| | __| |_   _
-    | '_ \ / _ \/ __| __|  _| \ \/ / '_ \| | | |/ _` |/ _` | | | |
-    | |_) | (_) \__ \ |_| | | |>  <| |_) | |_| | (_| | (_| | |_| |
+    _ __   ___  ___| |_ / _(_)_  _| |__  _   _  __| | __| |_   _
+    | '_ \ / _ \/ __| __| |_| \ \/ / '_ \| | | |/ _` |/ _` | | | |
+    | |_) | (_) \__ \ |_|  _| |>  <| |_) | |_| | (_| | (_| | |_| |
     | .__/ \___/|___/\__|_| |_/_/\_\_.__/ \__,_|\__,_|\__,_|\__, |
-    | |                                                      __/ |
     |_|                                                     |___/
-    ''')
-    print(__version__)
+
+    version: ''' + __version__, color.RESET)
 
 
 def list_queues():
@@ -194,7 +192,11 @@ def delete_by_search():
                                          stdout=subprocess.PIPE,
                                          stderr=subprocess.PIPE)
                         count += 1
-    print(color.GREEN + 'Total deleted: {0}'.format(count) + color.RESET)
+    print(color.BLUE + 'Looking for mail containing: \"' + args.delete_by_search + '\"...' + color.RESET)
+    if count == 0:
+        print (color.RED + '\"' + args.delete_by_search + '\" not found in search.' + color.RESET)
+    if count != 0:
+        print(color.GREEN + 'Total deleted: {0}'.format(count) + color.RESET)
 
 
 def main():

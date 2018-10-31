@@ -173,24 +173,24 @@ def delete_by_search():
 
 def main():
     if args.list_queues:
-        list_queues()
+        return list_queues()
     if args.purge_queues:
-        purge_queues()
+        return purge_queues()
     if args.clean_queues:
-        clean_queues()
+        return clean_queues()
     if args.delete_mail:
-        delete_mail()
+        return delete_mail()
     if args.hold_queues:
-        hold_queues()
+        return hold_queues()
     if args.release_queues:
-        release_queues()
+        return release_queues()
     if args.process_queues:
-        process_queues()
+        return process_queues()
     if args.show_message:
-        show_message()
+        return show_message()
     if args.delete_by_search:
-        delete_by_search()
-
+        return delete_by_search()
+    return list_queues()
 
 if __name__ == '__main__':
     main()

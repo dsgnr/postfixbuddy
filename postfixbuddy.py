@@ -108,67 +108,48 @@ def list_queues():
 
 
 def purge_queues():
-
-    check = str(raw_input(color.RED +
-                          'Do you really want to purge the ' +
-                          args.purge_queues +
-                          ' queue? (Y/N): ' + color.RESET)).lower().strip()
-    try:
-        if check[0] == 'y':
-            call(['postsuper', '-d', 'ALL', args.purge_queues])
-            print(color.GREEN + 'Purged all mail from the ' +
-                  args.purge_queues + ' queue!' + color.RESET)
-        elif check[0] == 'n':
-            return False
-        else:
-            print(color.RED + 'Invalid Input' + color.RESET)
-            return purge_queues()
-    except Exception as error:
-        print(color.RED + 'Please enter valid inputs' + color.RESET)
-        print(error)
-        return purge_queues()
+    print(color.RED + 'Do you really want to purge the ' +
+          args.purge_queues + ' queue? (Y/N): ' + color.RESET)
+    tty = open('/dev/tty')
+    option_answer = tty.readline().strip()
+    tty.close()
+    if option_answer == 'y':
+        call(['postsuper', '-d', 'ALL', args.purge_queues])
+        print(color.GREEN + 'Purged all mail from the ' +
+              args.purge_queues + ' queue!' + color.RESET)
+    if option_answer != 'y':
+        print(color.RED + 'Invalid Input' + color.RESET)
+        exit()
 
 
 def clean_queues():
-    check = str(raw_input(color.RED +
-                          'Do you really want to purge'
-                          'ALL mail queues? (Y/N): ' +
-                          color.RESET
-                          )).lower().strip()
-    try:
-        if check[0] == 'y':
-            call(['postsuper', '-d', 'ALL'])
-            print(color.GREEN + 'Purged all mail queues!' + color.RESET)
-        elif check[0] == 'n':
-            return False
-        else:
-            print(color.RED + 'Invalid Input' + color.RESET)
-            return clean_queues()
-    except Exception as error:
-        print(color.RED + 'Please enter valid inputs' + color.RESET)
-        print(error)
-        return clean_queues()
+    print(color.RED + 'Do you really want to purge'
+          'ALL mail queues? (Y/N): ' + color.RESET)
+    tty = open('/dev/tty')
+    option_answer = tty.readline().strip()
+    tty.close()
+    if option_answer == 'y':
+        call(['postsuper', '-d', 'ALL'])
+        print(color.GREEN + 'Purged all mail queues!' + color.RESET)
+    if option_answer != 'y':
+        print(color.RED + 'Invalid Input' + color.RESET)
+        exit()
 
 
 def delete_mail():
-    check = str(raw_input(color.RED +
-                          'Do you really want to delete mail ' +
-                          args.delete_mail + '? (Y/N): ' +
-                          color.RESET)).lower().strip()
-    try:
-        if check[0] == 'y':
-            call(['postsuper', '-d', args.delete_mail])
-            print(color.GREEN + 'Deleted mail ID: ' + color.YELLOW +
-                  args.delete_mail + color.GREEN + '!' + color.RESET)
-        elif check[0] == 'n':
-            return False
-        else:
-            print(color.RED + 'Invalid Input' + color.RESET)
-            return delete_mail()
-    except Exception as error:
-        print(color.RED + 'Please enter valid inputs' + color.RESET)
-        print(color.RED + error + color.RESET)
-        return delete_mail()
+    print(color.RED + 'Do you really want to delete mail ' +
+          args.delete_mail + '? (Y/N): ' +
+          color.RESET)
+    tty = open('/dev/tty')
+    option_answer = tty.readline().strip()
+    tty.close()
+    if option_answer == 'y':
+        call(['postsuper', '-d', args.delete_mail])
+        print(color.GREEN + 'Deleted mail ID: ' + color.YELLOW +
+              args.delete_mail + color.GREEN + '!' + color.RESET)
+    if option_answer != 'y':
+        print(color.RED + 'Invalid Input' + color.RESET)
+        exit()
 
 
 def hold_queues():

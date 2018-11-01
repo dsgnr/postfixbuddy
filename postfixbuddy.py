@@ -123,7 +123,7 @@ def purge_queues():
 
 
 def clean_queues():
-    print(color.RED + 'Do you really want to purge'
+    print(color.RED + 'Do you really want to purge '
           'ALL mail queues? (Y/N): ' + color.RESET)
     tty = open('/dev/tty')
     option_answer = tty.readline().strip()

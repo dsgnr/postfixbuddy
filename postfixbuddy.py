@@ -109,47 +109,47 @@ def list_queues():
 
 def purge_queues():
     print(color.RED + 'Do you really want to purge the ' +
-          args.purge_queues + ' queue? (Y/N): ' + color.RESET)
+          args.purge_queues + ' queue? (y/n): ' + color.RESET)
     tty = open('/dev/tty')
     option_answer = tty.readline().strip()
     tty.close()
-    if option_answer == 'y':
+    if option_answer.lower() == 'y':
         call(['postsuper', '-d', 'ALL', args.purge_queues])
         print(color.GREEN + 'Purged all mail from the ' +
               args.purge_queues + ' queue!' + color.RESET)
-    if option_answer != 'y':
-        print(color.RED + 'Invalid Input' + color.RESET)
-        exit()
+    if  option_answer.lower() != 'y':
+        print(color.RED + 'Exiting...' + color.RESET)
+        sys.exit(1)
 
 
 def clean_queues():
     print(color.RED + 'Do you really want to purge '
-          'ALL mail queues? (Y/N): ' + color.RESET)
+          'ALL mail queues? (y/n): ' + color.RESET)
     tty = open('/dev/tty')
     option_answer = tty.readline().strip()
     tty.close()
-    if option_answer == 'y':
+    if option_answer.lower() == 'y':
         call(['postsuper', '-d', 'ALL'])
         print(color.GREEN + 'Purged all mail queues!' + color.RESET)
-    if option_answer != 'y':
-        print(color.RED + 'Invalid Input' + color.RESET)
-        exit()
+    if  option_answer.lower() != 'y':
+        print(color.RED + 'Exiting...' + color.RESET)
+        sys.exit(1)
 
 
 def delete_mail():
     print(color.RED + 'Do you really want to delete mail ' +
-          args.delete_mail + '? (Y/N): ' +
+          args.delete_mail + '? (y/n): ' +
           color.RESET)
     tty = open('/dev/tty')
     option_answer = tty.readline().strip()
     tty.close()
-    if option_answer == 'y':
+    if option_answer.lower() == 'y':
         call(['postsuper', '-d', args.delete_mail])
         print(color.GREEN + 'Deleted mail ID: ' + color.YELLOW +
               args.delete_mail + color.GREEN + '!' + color.RESET)
-    if option_answer != 'y':
-        print(color.RED + 'Invalid Input' + color.RESET)
-        exit()
+    if  option_answer.lower() != 'y':
+        print(color.RED + 'Exiting...' + color.RESET)
+        sys.exit(1)
 
 
 def hold_queues():

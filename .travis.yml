@@ -1,0 +1,18 @@
+language: python
+python:
+ - "2.7"
+ - "3.6"
+
+dist: xenial
+env: PYTHONDONTWRITEBYTECODE=true
+sudo: required
+
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get install -y -qq postfix
+
+install:
+  pip install pep8 pytest-pep8
+
+script:
+  find . -name \*.py -exec py.test --pep8 {} \;

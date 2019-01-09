@@ -1,5 +1,7 @@
 ## Postfix Buddy
 
+[![Build Status](https://travis-ci.org/dsgnr/postfixbuddy.svg?branch=master)](https://travis-ci.org/dsgnr/postfixbuddy)
+
 PostfixBuddy is a recreation of pfHandle.perl but written in Python.
 
 ### Options

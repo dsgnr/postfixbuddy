@@ -12,7 +12,8 @@ before_install:
   - sudo apt-get install -y -qq postfix
 
 install:
-  pip install pep8 pytest-pep8
+  - pip install -U -q pip
+  - pip install -r requirements.txt
 
-script:
-  find . -name \*.py -exec py.test --pep8 {} \;
+script: 
+  - make tests

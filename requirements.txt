@@ -1,3 +1,2 @@
-pylint==1.8.1
+pylint==1.9.4
 pycodestyle==2.5.0
-pytest==3.2.3

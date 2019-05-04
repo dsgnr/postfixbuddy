@@ -1,6 +1,9 @@
 ## Postfix Buddy
 
 [![Build Status](https://travis-ci.org/dsgnr/postfixbuddy.svg?branch=master)](https://travis-ci.org/dsgnr/postfixbuddy)
+[![Build Status](https://jenkins.handsoff.cloud/buildStatus/icon?job=postfixbuddy%2Fmaster)](https://jenkins.handsoff.cloud/job/postfixbuddy/job/master/)
+![GitHub All Releases](https://img.shields.io/github/downloads/dsgnr/postfixbuddy/total.svg)
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/dsgnr/postfixbuddy.svg)
 
 PostfixBuddy is a recreation of pfHandle.perl but written in Python.
 
@@ -23,9 +26,9 @@ PostfixBuddy is a recreation of pfHandle.perl but written in Python.
     -v, --version         show program's version number and exit
 
 #### Listing statistics of queues
-Lists a counter for all mail queues. 
+Lists a counter for all mail queues.
 
-``` 
+```
 ➜ ./postfixbuddy.py  -l
 ============== Mail Queue Summary ==============
 Active Queue Count: 12
@@ -82,7 +85,7 @@ Incoming Queue Count: 0
 ```
 
 #### Viewing messages
-It is possible to view specific mail based on their mailq IDs. 
+It is possible to view specific mail based on their mailq IDs.
 
 ```
 ➜  ./postfixbuddy.py -s 6CB161202AB

@@ -14,7 +14,7 @@ pipeline {
                             steps {
                                 echo "Installing requirements..."
                                 sh '''pip install -q -U pip
-                                      pip install -r requirements.txt'''
+                                      pip install -r tests/python2.7/requirements.txt'''
                             }
                         }
                         stage('Pylint') {
@@ -44,7 +44,7 @@ pipeline {
                             steps {
                                 echo "Installing requirements..."
                                 sh '''pip install -q -U pip
-                                      pip install -r requirements.txt'''
+                                      pip install -r tests/python2.7/requirements.txt'''
                             }
                         }
                         stage('Pycodestyle') {
@@ -78,7 +78,7 @@ pipeline {
                             steps {
                                 echo "Installing requirements..."
                                 sh '''pip3 install -q -U pip
-                                      pip3 install -r requirements.txt'''
+                                      pip3 install -r tests/python3.7/requirements.txt'''
                             }
                         }
                         stage('Pylint') {
@@ -108,7 +108,7 @@ pipeline {
                             steps {
                                 echo "Installing requirements..."
                                 sh '''pip3 install -q -U pip
-                                      pip3 install -r requirements.txt'''
+                                      pip3 install -r tests/python3.7/requirements.txt'''
                             }
                         }
                         stage('Pycodestyle') {

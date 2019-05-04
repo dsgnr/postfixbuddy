@@ -17,7 +17,10 @@ before_install:
 
 install:
 - pip install -U -q pip
-- pip install -r requirements.txt
+- pip3 install -U -q pip
+
+- pip install -r tests/python2.7/requirements.txt
+- pip3 install -r tests/python3.7/requirements.txt
 
 script:
 - make tests

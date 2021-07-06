@@ -58,7 +58,7 @@ try:
                                      stderr=subprocess.PIPE)
     OUTPUT, ERROR = GET_QUEUE_DIR.communicate()
     if OUTPUT:
-        PF_DIR = OUTPUT.split()[0]
+        PF_DIR = OUTPUT.split()[0].decode('utf-8')
 except OSError:
     pass
 

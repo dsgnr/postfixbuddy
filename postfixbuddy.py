@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# postfixbuddy.py created by Daniel Hand (daniel.hand@rackspace.co.uk)
+# postfixbuddy.py created by Daniel Hand (email@danielhand.io)
 # This is a recreation of pfHandle.perl but in Python.
 
 from __future__ import absolute_import, division, print_function
@@ -7,13 +7,13 @@ from __future__ import absolute_import, division, print_function
 # Standard Library
 import argparse
 import os
-from os.path import join
-import sys
 import subprocess
+import sys
+from os.path import join
 from subprocess import call
 
 
-__version__ = '0.2.0'
+__version__ = '0.3.0'
 
 
 def get_options():

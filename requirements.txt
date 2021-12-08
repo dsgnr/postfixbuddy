@@ -1,4 +1,4 @@
 pylint==2.9.3
 pycodestyle==2.8.0
 pytest==6.2.4
-isort==5.10.0
+isort==5.10.1
